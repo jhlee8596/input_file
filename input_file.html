@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+    body{
+      width:100%;
+      max-width: 640px;
+      margin:0px auto;
+    }
+    .photoFrame{
+      width: 500px;
+      height: 500px;
+    }
+    .photoFrame:hover{
+      cursor: pointer;
+    }
+  </style>
+  <title>Document</title>
+</head>
+<body>
+  <h1>
+    이미지 불러오기
+  </h1>
+  <div class="filebox">
+    <input class="upload-name" value="선택된 파일 없음" readonly>
+    <label for="ex_filename">사진첨부</label> 
+    <input type="file" id="ex_filename" class="upload-hidden" accept="file_extension|audio/*|video/*|image/*|media_type">
+    <div id="pictures">
+
+    </div>
+  </div>
+</body>
+<script>
+  var fileInput = document.getElementById("ex_filename");
+  //값이 변경될때 호출 되는 이벤트 리스너
+  fileInput.addEventListener('change',function(e){
+    var file = e.target.files[0]; //선택된 파일
+    var reader = new FileReader();
+    reader.readAsDataURL(file); //파일을 읽는 메서드 
+
+    reader.onload = function(){
+      var photoFrame = document.createElement("div");
+      photoFrame.style = `background : url(${reader.result}); background-size : cover`;
+      photoFrame.className = "photoFrame";
+      document.getElementById("pictures").appendChild(photoFrame);
+      e.target.value = "";
+
+      photoFrame.addEventListener("click",function(){
+        document.getElementById("pictures").removeChild(photoFrame);
+      })
+    }
+  })
+  $(document).ready(function(){
+               var fileTarget = $('.filebox .upload-hidden');
+               fileTarget.on('change', function(){ // 값이 변경되면
+                if(window.FileReader){ // modern browser
+                  var filename = $(this)[0].files[0].name;
+                } 
+                else {
+                  var filename = $(this).val().split('/').pop().split('\\').pop(); // 파일명만 추출
+                }
+                // 추출한 파일명 삽입
+                $(this).siblings('.upload-name').val(filename); 
+              }); 
+            });
+
+          var _select_title = $(".text_ul_wrap > a");
+            $('<div class="select_icon"></div>').insertAfter(_select_title);
+
+            _select_title.click(function () {
+              $(".ul_select_style").toggleClass("active");
+              $(".select_icon").toggleClass("active");
+            });
+
+            $(".ul_select_style > li").on('click', function () {
+              var _li_value = $(this).text();
+              _select_title.text(_li_value);
+              $(".ul_select_style").removeClass("active");
+              $(".select_icon").toggleClass("active");
+            });
+            $("body").click(function (e) {
+              if($(".ul_select_style").hasClass("active")){
+                if(!$(".text_ul_wrap").has(e.target).length){
+                  $(".ul_select_style").removeClass("active");
+                  $(".select_icon").removeClass("active");
+                };
+              }
+            })
+</script>
+</html>
